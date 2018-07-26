@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq; // Librairies contenant des fonctions de tri des listes
 
 public class PopulationManager : MonoBehaviour {
 
@@ -32,9 +33,62 @@ public class PopulationManager : MonoBehaviour {
 			go.GetComponent<DNA>().b = Random.Range(0.0f,1.0f);
 			population.Add(go);
 		}
-		
 	}
 	
+	// Un GameObject est un objet représentant 1 personnage
+	GameObject Breed(GameObject parent1, GameObject parent2)
+	{
+		// Attribution d'une position aléatoire au nouvel enfant
+		Vector3 pos = new Vector3(Random.Range(-9,9),Random.Range(-4.5f,4.5f),0);
+		// Création de l'objet enfant
+		GameObject offspring = Instantiate(personPrefab, pos, Quaternion.identity);
+		DNA dna1 = parent1.GetComponent<DNA>();
+		DNA dna2 = parent2.GetComponent<DNA>();
+		// Mixage des ADN des parents
+		// Ou Mutation de l'ADN (attribution d'une couleur aléatoire)
+		if(Random.Range(0,1000) > 5)
+		{
+			offspring.GetComponent<DNA>().r = Random.Range(0,10) < 5 ? dna1.r : dna2.r;
+			offspring.GetComponent<DNA>().g = Random.Range(0,10) < 5 ? dna1.g : dna2.g;
+			offspring.GetComponent<DNA>().b = Random.Range(0,10) < 5 ? dna1.b : dna2.b;
+		}
+		else
+		{
+			offspring.GetComponent<DNA>().r = Random.Range(0.0f,1.0f);
+			offspring.GetComponent<DNA>().g = Random.Range(0.0f,1.0f);
+			offspring.GetComponent<DNA>().b = Random.Range(0.0f,1.0f);
+		}
+		
+		return offspring;
+	}
+
+
+	void BreedNewPopulation()
+	{
+		// Creation d'une nouvelle population
+		List<GameObject> newPopulation = new List<GameObject>();
+		// Tri de la population précédente par le temps avant click
+		// Modification de OrderBy par OrderByDescending pour conserver les
+		// premiers selectionnés au lieu des derniers
+		List<GameObject> sortedList = population.OrderByDescending(o => o.GetComponent<DNA>().timeToDie).ToList();
+
+		population.Clear(); // Vidage de la liste population actuelle
+		// Remplissage de la nouvelle population à partir de la moitié la plus performante
+		// de l'ancienne génération (arbitrairement la moitié, pourrait être plus ou moins)
+		for(int i = (int)(sortedList.Count / 2.0f) - 1; i < sortedList.Count - 1; i++)
+		{
+			population.Add(Breed(sortedList[i], sortedList[i+1]));
+			population.Add(Breed(sortedList[i+1], sortedList[i]));
+		}
+
+		// Destruction de la liste triée
+		for(int i = 0; i < sortedList.Count; i++)
+		{
+			Destroy(sortedList[i]);
+		}
+		generation++;
+	}
+
 	// Update is called once per frame
 	void Update () {
 		elapsed += Time.deltaTime;
