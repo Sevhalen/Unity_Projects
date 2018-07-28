@@ -31,6 +31,11 @@ public class PopulationManager : MonoBehaviour {
 			go.GetComponent<DNA>().r = Random.Range(0.0f,1.0f);
 			go.GetComponent<DNA>().g = Random.Range(0.0f,1.0f);
 			go.GetComponent<DNA>().b = Random.Range(0.0f,1.0f);
+			go.GetComponent<DNA>().s = Random.Range(0.05f,0.5f);
+
+			// Correction : remplacé par une ligne dans l'initilisation de l'objet enfant
+			//go.transform.localScale = new Vector3(go.GetComponent<DNA>().s,go.GetComponent<DNA>().s,0);
+
 			population.Add(go);
 		}
 	}
@@ -51,14 +56,20 @@ public class PopulationManager : MonoBehaviour {
 			offspring.GetComponent<DNA>().r = Random.Range(0,10) < 5 ? dna1.r : dna2.r;
 			offspring.GetComponent<DNA>().g = Random.Range(0,10) < 5 ? dna1.g : dna2.g;
 			offspring.GetComponent<DNA>().b = Random.Range(0,10) < 5 ? dna1.b : dna2.b;
+			offspring.GetComponent<DNA>().s = Random.Range(0,10) < 5 ? dna1.s : dna2.s;
 		}
 		else
 		{
 			offspring.GetComponent<DNA>().r = Random.Range(0.0f,1.0f);
 			offspring.GetComponent<DNA>().g = Random.Range(0.0f,1.0f);
 			offspring.GetComponent<DNA>().b = Random.Range(0.0f,1.0f);
+			offspring.GetComponent<DNA>().s = Random.Range(0.05f,0.5f);
 		}
 		
+		// Mise à jour du scale de l'enfant
+		// Correction : remplacé par une ligne dans l'initilisation de l'objet enfant
+		//offspring.transform.localScale = new Vector3(offspring.GetComponent<DNA>().s,offspring.GetComponent<DNA>().s,0);
+
 		return offspring;
 	}
 
